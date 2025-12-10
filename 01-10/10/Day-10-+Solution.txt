@@ -1,0 +1,12 @@
+SELECT request_at, 
+       COUNT(CASE WHEN status IN ('cancelled_by_client', 'cancelled_by_driver') 
+                 THEN 1 ELSE NULL END) AS cancelled_trip_count, 
+       COUNT(1) AS total_trips, 
+       1.0 * COUNT(CASE WHEN status IN ('cancelled_by_client', 'cancelled_by_driver') 
+                        THEN 1 ELSE NULL END) / COUNT(1) * 100 AS cancelled_percent
+FROM trips t
+INNER JOIN users c ON t.client_id = c.users_id
+INNER JOIN users d ON t.driver_id = d.users_id
+WHERE c.banned = 'No' 
+  AND d.banned = 'No'
+GROUP BY request_at;
