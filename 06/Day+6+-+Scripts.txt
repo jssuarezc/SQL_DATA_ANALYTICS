@@ -1,4 +1,0 @@
-declare @today_date date;
-declare @n int;
-set @today_date = '2022-01-01'; -- saturday
-set @n = 3;
