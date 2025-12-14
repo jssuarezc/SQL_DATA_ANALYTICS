@@ -37,3 +37,4 @@ query="SELECT e.emp_id, e.emp_name, m.emp_name AS manager_name, e.salary, m.sala
 df=pd.read_sql(query,conn)
 print("Query result:")
 print(df)
+conn.close()
