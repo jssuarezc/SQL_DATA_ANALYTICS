@@ -1,12 +1,12 @@
 import sqlite3
-import os
 import pandas as pd
+import os
 
-db_name="exercise11.db"
+db_name="exercise12.db"
 conn=sqlite3.connect(db_name)
 cursor=conn.cursor()
-
 #
+
 cursor.execute("""""")
 conn.commit()
 
