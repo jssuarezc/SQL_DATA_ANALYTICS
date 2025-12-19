@@ -1,25 +1,22 @@
 import sqlite3
-import os
 import pandas as pd
+from datetime import datetime,timedelta
 
-db_name="exercise06.db"
-conn=sqlite3.cursor(db_name)
-cursor=conn.cursor()
+today_date_str = '2022-01-03'
+n=3
+today_dt= datetime.strptime(today_date_str,'%Y-%m-%d')
 
-###
-cursor.execute("""""")
-conn.commit()
+#Replicating T-SQL in SQLite:
 
-string = [
-    (),
-    (),
-    ()
-]
-cursor.executemany("",string)
-conn.commit()
-###
+days_to_next_sunday= (6- today_dt.weekday())
+if days_to_next_sunday <=0:
+    days_to_next_sunday +=7
 
-queryexecute=""
-df=pd.read_sql(queryexecute,conn)
+result_date = today_dt +timedelta(days=days_to_next_sunday) + timedelta(weeks=n-1)
+
+
+conn=sqlite3.connect("exercise06.db")
+query=f"SELECT '{result_date.date()}' AS calculated_date"
+df = pd.read_sql(query,conn)
 print(df)
 conn.close()
