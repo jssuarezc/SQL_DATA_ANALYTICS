@@ -16,8 +16,9 @@ cursor=conn.cursor()
 # ]
 
 # cursor.executemany("INSERT INTO sales VALUES(?,?,?,?)",string_db)
+# conn.commit()
 
-querytoexecute="WITH r_cte AS (SELECT MIN(period_start) AS dates, MAX(period_end) AS max_date FROM sales UNION ALL SELECT dateadd(day,1,dates) AS dates, max_date FROM r_cte WHERE dates < max_date) SELECT product_id, YEAR(dates) AS report_year, SUM(average_daily_sales) AS total_amount FROM r_cte INNER JOIN sales ON dates BETWEEN period_start AND period_end GROUP BY product_id, YEAR(dates) ORDER BY product_id, YEAR(dates) OPTION (maxrecursion 1000)"
+querytoexecute="WITH RECURSIVE r_cte AS (SELECT MIN(period_start) AS dates, MAX(period_end) AS max_date FROM sales UNION ALL SELECT date(dates, '+1 day'), max_date FROM r_cte WHERE dates < max_date) SELECT s.product_id, strftime('%Y', r.dates) AS report_year, SUM(s.average_daily_sales) AS total_amount FROM r_cte r INNER JOIN sales s ON r.dates BETWEEN s.period_start AND s.period_end GROUP BY s.product_id, report_year ORDER BY s.product_id, report_year;"
 df=pd.read_sql(querytoexecute,conn)
 print(df)
 conn.close()
