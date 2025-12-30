@@ -31,6 +31,7 @@ cursor=conn.cursor()
 #     (3, 'P','2020-03-22')
 # ]
 # cursor.executemany("INSERT INTO events VALUES(?,?,?)",events_info)
+# conn.commit()
 
 stringtoe = "SELECT COUNT(DISTINCT u.user_id) AS total_users, COUNT(DISTINCT CASE WHEN julianday(e.access_date) - julianday(u.join_date) <= 30 THEN u.user_id END) AS retained_users, 100.0 * COUNT(DISTINCT CASE WHEN julianday(e.access_date) - julianday(u.join_date) <= 30 THEN u.user_id END) / COUNT(DISTINCT u.user_id) AS retention_rate FROM users AS u LEFT JOIN events AS e ON u.user_id = e.user_id AND e.type = 'P' WHERE u.user_id IN (SELECT user_id FROM events WHERE type = 'Music')"
 df=pd.read_sql(stringtoe,conn)
