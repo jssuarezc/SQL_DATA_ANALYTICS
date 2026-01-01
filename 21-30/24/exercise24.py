@@ -24,6 +24,8 @@ cursor=conn.cursor()
 # conn.commit()
 
 firstmethod="SELECT store, 'Q' || CAST(10-SUM(CAST(SUBSTR(quarter,-1)AS INT))AS TEXT) AS q_no FROM stores GROUP BY store"
-df=pd.read_sql(firstmethod,conn)
+secondmethod="WITH CTE AS(SELECT DISTINCT store, 1 AS q_no FROM stores UNION ALL SELECT store, q_no + 1 AS q_no FROM CTE WHERE q_no <4), q AS (SELECT store, 'Q' || CAST(q_no AS CHAR(1)) AS q_no FROM CTE) SELECT q.* FROM q LEFT JOIN stores AS s ON q.store= s.store AND q.q_no = s.quarter WHERE s.store IS NULL"
+
+df=pd.read_sql(secondmethod,conn)
 print(df)
 conn.close()
