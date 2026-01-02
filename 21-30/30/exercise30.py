@@ -35,9 +35,9 @@ cursor.executemany("INSERT INTO students VALUES(?,?,?,?,?,?)", students_data)
 conn.commit()
 
 firstq = "WITH avg_cte AS (SELECT subject, AVG(marks) AS avg_marks FROM students GROUP BY subject) SELECT s.*, ac.* FROM students s INNER JOIN avg_cte ac ON s.subject = ac.subject WHERE s.marks > ac.avg_marks;"
-secondq = "SELECT * FROM students"
+secondq = "SELECT COUNT(DISTINCT CASE WHEN marks > 90 THEN studentid ELSE NULL END) * 1.0 / COUNT(DISTINCT studentid) * 100 AS perc FROM students;"
 thirdq = "SELECT * FROM students"
 fourthq = "SELECT * FROM students"
-df = pd.read_sql(firstq, conn)
+df = pd.read_sql(secondq, conn)
 print(df)
 conn.close()
