@@ -34,7 +34,10 @@ students_data = [
 cursor.executemany("INSERT INTO students VALUES(?,?,?,?,?,?)", students_data)
 conn.commit()
 
-querytoexec = "SELECT * FROM students"
-df = pd.read_sql(querytoexec, conn)
+firstq = "WITH avg_cte AS (SELECT subject, AVG(marks) AS avg_marks FROM students GROUP BY subject) SELECT s.*, ac.* FROM students s INNER JOIN avg_cte ac ON s.subject = ac.subject WHERE s.marks > ac.avg_marks;"
+secondq = "SELECT * FROM students"
+thirdq = "SELECT * FROM students"
+fourthq = "SELECT * FROM students"
+df = pd.read_sql(firstq, conn)
 print(df)
 conn.close()
