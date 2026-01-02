@@ -37,7 +37,7 @@ cursor = conn.cursor()
 firstq = "WITH avg_cte AS (SELECT subject, AVG(marks) AS avg_marks FROM students GROUP BY subject) SELECT s.*, ac.* FROM students s INNER JOIN avg_cte ac ON s.subject = ac.subject WHERE s.marks > ac.avg_marks;"
 secondq = "SELECT COUNT(DISTINCT CASE WHEN marks > 90 THEN studentid ELSE NULL END) * 1.0 / COUNT(DISTINCT studentid) * 100 AS perc FROM students;"
 thirdq = "SELECT subject, SUM(CASE WHEN rnk_desc = 2 THEN marks ELSE NULL END) AS second_highest_marks, SUM(CASE WHEN rnk_asc = 2 THEN marks ELSE NULL END) AS second_lowest_marks FROM (SELECT subject, marks, RANK() OVER(PARTITION BY subject ORDER BY marks ASC) AS rnk_asc, RANK() OVER(PARTITION BY subject ORDER BY marks DESC) AS rnk_desc FROM students) A GROUP BY subject;"
-fourthq = "SELECT * FROM students"
-df = pd.read_sql(thirdq, conn)
+fourthq = "SELECT *, CASE WHEN marks > prev_marks THEN 'inc' WHEN marks < prev_marks THEN 'dec' ELSE NULL END AS statys FROM (SELECT *, LAG(marks, 1) OVER(PARTITION BY studentid ORDER BY testdate, subject) AS prev_marks FROM students) A;"
+df = pd.read_sql(fourthq, conn)
 print(df)
 conn.close()
